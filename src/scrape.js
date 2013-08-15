@@ -1,5 +1,6 @@
 function scrape()
 {
+	//IMPORTANT TODO: MAKR THE PAGE AS SCRAPED, SO WE DON'T RETURN ANYTHING NEW IF THE USER OPENS IT AGAIN ON THIS PAGE
 	var text = $('body').text()
 	var kanji = {}
 	var charCode;

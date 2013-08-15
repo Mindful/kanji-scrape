@@ -56,7 +56,7 @@ chrome.tabs.getSelected(null, function(tab)
         pageHash = response.data
         chrome.storage.sync.get('kanji', function(loaded)
         {
-            storageHash = loaded['kanji']
+            storageHash = loaded['kanji'] || {}
             newHash = registerNewHash(pageHash, storageHash)
             stuff = storageHash
             pagestuff = pageHash
