@@ -11,21 +11,38 @@ function kanjiString(kanji)
   return out
 }
 
+//The values in the storage hash are page views and the ones in the generated hash are occurences on page, so they don't equate
+//and consequently we don't sum them. We only look for instances of the kanji existing
 
-var alltext
-//document.addEventListener('DOMContentLoaded',
+function computeNewHash(pageHash, storageHash)
+{
+  for (var value in pageHash)
+  {
+    storageHash[value] = storageHash[value] ? storageHash[value]+1 : 1
+  }
+}
+
+//Save the old hash, and have a "don't save results from this page" button for the purposes of reverting
+
+
 $(function () 
 {
 chrome.tabs.getSelected(null, function(tab) 
   {
-      chrome.tabs.sendRequest(tab.id, {method: "scrape"}, function(response) 
-      {
-        //in case of multiple responses, check method on response for string match "scrape"
-        //compare and record the number of times a Kanji's been seen as well. it's in the hash in response.data
-          kanjiHash = response.data
-          $('#text').text(kanjiString(kanjiHash))
+    var pageHash, storageHash, newHash
 
-         // alert(kanjiString(kanjiHash))
-      });
+    //Get the page hash in the form of {'Kanji':Occurence #}
+    chrome.tabs.sendRequest(tab.id, {method: "scrape"}, function(response)
+    { //in case of multiple responses, check method on response for string match "scrape"
+        pageHash = response.data
+    });
+
+    //Get the storage hash in the form of {'Kanji:Seen # times on page'}
+    chrome.storage.sync.get('kanji', function(storage)
+    {
+        storageHash = storage
+    })
+    
+    $('#text').text(kanjiString(pageHash))
   });
 });

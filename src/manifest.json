@@ -5,6 +5,10 @@
   "description": "This extension scrapes your current page and alerts you of any Kanji you haven't seen before.",
   "version": "0.1",
 
+  "permissions": [
+    "storage"
+  ],
+
   "content_scripts": [
       {
         "matches": ["<all_urls>"],
