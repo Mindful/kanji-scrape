@@ -12,7 +12,7 @@ function scrape()
 			kanji[text[i]] = kanji[text[i]] ? kanji[text[i]]+1 : 1
 		}
 	}
-	return kanji
+	return kanji //these numbers seem to not always be accurate, at least via lang-8. perhaps there's some "visible" but covered text
 }
 
 
