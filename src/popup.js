@@ -46,12 +46,11 @@ function registerNewHash(pageHash, storageHash)
 var stuff, pagestuff
 $(function () 
 {
-chrome.tabs.getSelected(null, function(tab) 
-  {
+chrome.tabs.query({active: true, currentWindow: true}, function(tabs) 
+{
     var pageHash, storageHash, newHash
-
     //Get the page hash in the form of {'Kanji':Occurence #}
-    chrome.tabs.sendRequest(tab.id, {method: "scrape"}, function(response)
+    chrome.tabs.sendMessage(tabs[0].id, {method: "scrape"}, function(response)
     { //this is asynchronous, so we're ending up nesting like this to insure consecutiveness
         pageHash = response.data
         chrome.storage.sync.get('kanji', function(loaded)

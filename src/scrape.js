@@ -16,8 +16,8 @@ function scrape()
 }
 
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse)
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse)
 {
-	//in case of multiple requests, string match request to "scrape"
+	//in case of multiple Messages, string match Message to "scrape"
   sendResponse({data: scrape(), method: "scrape"})
 })
