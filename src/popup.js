@@ -22,6 +22,20 @@ function numberString(kanji)
   return out
 }
 
+
+function orderedPairs(kanji)
+{
+  pairs = []
+  for (var value in kanji) pairs.push([value, kanji[value]])
+  pairs.sort(function(a, b) 
+  {
+    a = a[1];
+    b = b[1];
+    return a < b ? -1 : (a > b ? 1 : 0);
+  })
+  return pairs
+}
+
 //The values in the storage hash are page views and the ones in the generated hash are occurences on page, so they don't equate
 //and consequently we don't sum them. We only look for instances of the kanji existing
 
