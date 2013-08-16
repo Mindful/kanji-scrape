@@ -42,29 +42,37 @@ function registerNewHash(pageHash, storageHash)
 }
 
 //Save the old hash, and have a "don't save results from this page" button for the purposes of reverting
-
-var stuff, pagestuff
+var pageHash, storageHash, newHash
 $(function () 
 {
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) 
 {
-    var pageHash, storageHash, newHash
     //Get the page hash in the form of {'Kanji':Occurence #}
     chrome.tabs.sendMessage(tabs[0].id, {method: "scrape"}, function(response)
     { //this is asynchronous, so we're ending up nesting like this to insure consecutiveness
-        pageHash = response.data
-        chrome.storage.sync.get('kanji', function(loaded)
+        if (response.repeat)
         {
-            storageHash = loaded['kanji'] || {}
-            newHash = registerNewHash(pageHash, storageHash)
-            stuff = storageHash
-            pagestuff = pageHash
-            $('#text').text(numberString(storageHash))
-        })
+          chrome.storage.sync.get('kanji', function(loaded)
+          {
+              
+              storageHash = loaded['kanji'] || {}
+              $('#text').text("Run Twice: "+numberString(storageHash))
+          })
+        }
+        else
+        {
+          pageHash = response.data
+          chrome.storage.sync.get('kanji', function(loaded)
+          {
+              
+              storageHash = loaded['kanji'] || {}
+              newHash = registerNewHash(pageHash, storageHash)
+              $('#text').text(numberString(storageHash))
+          })
+        }
+
 
     });
-    //Get the storage hash in the form of {'Kanji:Seen # times on page'}
-    newHash = registerNewHash(pageHash, storageHash)
     
   });
 });

@@ -1,6 +1,7 @@
+var scraped = false
+
 function scrape()
 {
-	//IMPORTANT TODO: MAKR THE PAGE AS SCRAPED, SO WE DON'T RETURN ANYTHING NEW IF THE USER OPENS IT AGAIN ON THIS PAGE
 	var text = $('body').text()
 	var kanji = {}
 	var charCode;
@@ -12,12 +13,20 @@ function scrape()
 			kanji[text[i]] = kanji[text[i]] ? kanji[text[i]]+1 : 1
 		}
 	}
+	scraped = true
 	return kanji //these numbers seem to not always be accurate, at least via lang-8. perhaps there's some "visible" but covered text
 }
 
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse)
 {
-	//in case of multiple Messages, string match Message to "scrape"
-  sendResponse({data: scrape(), method: "scrape"})
+	if (!scraped)
+	{
+		sendResponse({data: scrape(), method: "scrape", repeat: false})
+	}
+	else
+	{
+		sendResponse({data: null, method: "scrape", repeat: true})
+	}
+	//in case of multiple Messages, string match Message to "scrape")
 })
