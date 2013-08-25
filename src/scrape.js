@@ -1,5 +1,7 @@
 var scraped = false
 
+//scrape() should eventually be updated to request the KANJI_MAX and KANJ_MIN constants from popup.js
+//once it has that data, then it runs, and then sends data back
 function scrape()
 {
 	var text = $('body').text()
