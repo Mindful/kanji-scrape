@@ -25,7 +25,7 @@ function saveSynced(kanjiHash)
 
   for (var i = 1; i <= STORAGE_ENTRIES; i++)
   {
-    syncHash[i] = {}
+    syncHash[''+i] = {}
   }
 
   for (var kanji in kanjiHash)
@@ -33,7 +33,7 @@ function saveSynced(kanjiHash)
     //have to use floor+1, or numbers that == the bottom of the range break it
     //this works, even for the highest and lowest kanji values (likely because our top range slightly
     //exceeds max so division for the highest number still produces a number <25)
-    syncHash[Math.floor((kanji.charCodeAt(0) - KANJI_MIN)/HASH_RANGE)+1][kanji] = kanjiHash[kanji]
+    syncHash[''+(Math.floor((kanji.charCodeAt(0) - KANJI_MIN)/HASH_RANGE)+1)][kanji] = kanjiHash[kanji]
   }
 
   chrome.storage.sync.set(syncHash, function(){
@@ -51,21 +51,23 @@ function loadSynced(callback)
   var loadList = []
   for (var i = 1; i <= STORAGE_ENTRIES; i++)
   {
-    loadList.push(i)
+    loadList.push(''+i)
   }
-  chrome.storage.sync.get(loadList, function(loaded)
+  chrome.storage.sync.get(loadList, function(loaded) //good to here; we load good data
   {
     if (chrome.runtime.lastError)
     {
        error(chrome.runtime.lastError.message)
        return
     }
+    console.log(loaded)
     var syncHash = {}
-    for (var loadItem in loadList)
+    for (var loadKey in loadList)
     {
-      for (var item in loadItem)
+      console.log(loaded[loadKey])
+      for (var item in loaded[loadKey])
       {
-        syncHash[item] = loadItem[item]
+        syncHash[item] = loaded[loadKey][item]
       }
     }
     callback(syncHash)
@@ -209,4 +211,14 @@ function draw(hash)
 function error(errorText)
 {
   $('#text').text(errorText)
+}
+
+function syncHashStructure() //demo function, no actual use
+{
+  var syncHash = {}
+  for (var i = 1; i <= STORAGE_ENTRIES; i++)
+  {
+    syncHash[i] = ( KANJI_MIN+((i-1)*HASH_RANGE) )+"-"+( KANJI_MIN+(i*HASH_RANGE) )
+  }
+  return syncHash
 }
