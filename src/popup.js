@@ -22,6 +22,9 @@ var HASH_RANGE = 837 //Math.floor((KANJI_MAX - KANJI_MIN) / STORAGE_ENTRIES)+1
 //new kanji should probably be sorted like that, and there should at least be an option to sort other kanji like
 //that (the alternative being sorting them by how many times you've seen them before)
 
+//TODO: Display only Kanji on the page (just verify things before we draw them by checking the originally
+//returned hash). Also, much better styling - links having HREFs is making them blue, for example
+
 
 
 function saveSynced(kanjiHash)
@@ -160,7 +163,7 @@ function draw(hash)
     for (var i = 0 ; i < newPairs.length; i ++)
     {
       pair = newPairs[i]
-      appendString = '<a tooltip="'+pair[0]+' is new!" class="kanji">'+pair[0]+'</a>'
+      appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' is new!" class="kanji">'+pair[0]+'</a>'
       if (pair != newPairs[pairs.length-1]) appendString += ", "
       div.append(appendString)
     }
@@ -172,7 +175,7 @@ function draw(hash)
     for (var i = 0 ; i < pairs.length; i ++)
     {
       pair = pairs[i]
-      appendString = '<a tooltip="'+pair[0]+' seen '+pair[1]+' times" class="kanji">'+pair[0]+'</a>'
+      appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' seen '+pair[1]+' times" class="kanji">'+pair[0]+'</a>'
       if (pair != pairs[pairs.length-1]) appendString += ", "
       div.append(appendString)
     }
