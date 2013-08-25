@@ -78,30 +78,6 @@ function loadSynced(callback)
 
 }
 
-
-function kanjiString(kanji)
-{
-  var out = ""
-  for (var value in kanji) //This iterates keys. To iterate values, just do a for value in kanji and check kanji[value]
-  {
-    out += (value+", ")
-  }
-  out = out.replace(/(, $)/g, "").replace(/(,$)/,"")
-  return out
-}
-
-function numberString(kanji)
-{
-  var out = ""
-  for (var value in kanji) //This iterates keys. To iterate values, just do a for value in kanji and check kanji[value]
-  {
-    out += (kanji[value]+", ")
-  }
-  out = out.replace(/(, $)/g, "").replace(/(,$)/,"")
-  return out
-}
-
-
 function pairLists(kanji)
 {
   pairs = []
@@ -130,12 +106,8 @@ function registerNewHash(pageHash, storageHash)
     storageHash[value] = storageHash[value] ? storageHash[value]+1 : 1
   }
 
-    chrome.storage.sync.set({'kanji':storageHash}, function(){
-      if (chrome.runtime.lastError)
-      {
-         $('#text').text(chrome.runtime.lastError.message)
-      }
-    })
+  saveSynced(storageHash)
+
   return storageHash
 }
 
@@ -151,21 +123,20 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
     { //this is asynchronous, so we're ending up nesting like this to insure consecutiveness
         if (response.repeat)
         {
-          chrome.storage.sync.get('kanji', function(loaded)
+          loadSynced(function(loaded)
           {
-              
-              storageHash = loaded['kanji'] || {}
-              $('#text').text("Run Twice: "+numberString(storageHash))
+              storageHash = loaded
+              draw(storageHash)
           })
         }
         else
         {
           pageHash = response.data
-          chrome.storage.sync.get('kanji', function(loaded)
+          loadSynced(function(loaded)
           {
-              storageHash = loaded['kanji'] || {}
+              storageHash = loaded
               newHash = registerNewHash(pageHash, storageHash)
-              $('#text').text(numberString(newHash) + "tee")
+              draw(newHash)
           })
         }
 
@@ -179,15 +150,16 @@ function draw(hash)
 {
   //[kanji, #seen]
   var div, appendString;
-  var pairLists = pairLists(hash)
-  var newPairs = pairLists[0]
-  var pairs = pairLists[1]
+  var lists = pairLists(hash)
+  var newPairs = lists[0]
+  var pairs = lists[1]
   if (newPairs.length > 0)
   {
     div = $('#newKanji')
-    //unhide new div
-    for (var pair in newPairs)
+    div.show()
+    for (var i = 0 ; i < newPairs.length; i ++)
     {
+      pair = newPairs[i]
       appendString = '<a tooltip="'+pair[0]+' is new!" class="kanji">'+pair[0]+'</a>'
       if (pair != newPairs[pairs.length-1]) appendString += ", "
       div.append(appendString)
@@ -196,24 +168,25 @@ function draw(hash)
   if (pairs.length > 0)
   {
     div = $('#kanji')
-    //unhide kanji div
-    for (var pair in pairs)
+    div.show()
+    for (var i = 0 ; i < pairs.length; i ++)
     {
+      pair = pairs[i]
       appendString = '<a tooltip="'+pair[0]+' seen '+pair[1]+' times" class="kanji">'+pair[0]+'</a>'
       if (pair != pairs[pairs.length-1]) appendString += ", "
       div.append(appendString)
-      //<a tooltip="僕 seen 3 times" class="kanji">僕</a>
     }
   }
   if (newPairs.length < 1 && pairs.length < 1)
   {
     div = $('#noKanji')
+    div.show()
   }
 }
 
 function error(errorText)
 {
-  $('#text').text(errorText)
+  $('#error').text(errorText)
 }
 
 function syncHashStructure() //demo function, no actual use
