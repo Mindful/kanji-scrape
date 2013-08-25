@@ -69,11 +69,11 @@ function loadSynced(callback)
        return
     }
     var syncHash = {}
-    for (var loadKey in loadList)
+    for (var i = 1; i <= STORAGE_ENTRIES; i++)
     {
-      for (var item in loaded[loadKey])
+      for (var item in loaded[''+i])
       {
-        syncHash[item] = loaded[loadKey][item]
+        syncHash[item] = loaded[''+i][item]
       }
     }
     callback(syncHash)
@@ -186,10 +186,11 @@ function draw(hash, pageHash)
       }
     }
   }
-  if (newPairs.length < 1 && pairs.length < 1)
+  if (Object.keys(pageHash).length < 1)
   {
     div = $('#noKanji')
     div.show()
+    div.append("No Kanji found on page :(")
   }
 }
 
