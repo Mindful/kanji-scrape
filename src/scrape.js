@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse)
 	}
 	else
 	{
-		sendResponse({data: null, method: "scrape", repeat: true})
+		sendResponse({data: scrape(), method: "scrape", repeat: true})
 	}
 	//in case of multiple Messages, string match Message to "scrape")
 })

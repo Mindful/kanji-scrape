@@ -22,8 +22,8 @@ var HASH_RANGE = 837 //Math.floor((KANJI_MAX - KANJI_MIN) / STORAGE_ENTRIES)+1
 //new kanji should probably be sorted like that, and there should at least be an option to sort other kanji like
 //that (the alternative being sorting them by how many times you've seen them before)
 
-//TODO: Display only Kanji on the page (just verify things before we draw them by checking the originally
-//returned hash). Also, much better styling - links having HREFs is making them blue, for example
+//TODO: check wikipedia quirks, and look into a better way to get only visible page text.
+//Also, much better styling - links having HREFs is making them blue, for example
 
 
 
@@ -124,22 +124,22 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
     //Get the page hash in the form of {'Kanji':Occurence #}
     chrome.tabs.sendMessage(tabs[0].id, {method: "scrape"}, function(response)
     { //this is asynchronous, so we're ending up nesting like this to insure consecutiveness
+        pageHash = response.data
         if (response.repeat)
         {
           loadSynced(function(loaded)
           {
               storageHash = loaded
-              draw(storageHash)
+              draw(storageHash, pageHash)
           })
         }
         else
         {
-          pageHash = response.data
           loadSynced(function(loaded)
           {
               storageHash = loaded
               newHash = registerNewHash(pageHash, storageHash)
-              draw(newHash)
+              draw(newHash, pageHash)
           })
         }
 
@@ -149,7 +149,7 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
   });
 });
 
-function draw(hash)
+function draw(hash, pageHash)
 {
   //[kanji, #seen]
   var div, appendString;
@@ -163,9 +163,12 @@ function draw(hash)
     for (var i = 0 ; i < newPairs.length; i ++)
     {
       pair = newPairs[i]
-      appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' is new!" class="kanji">'+pair[0]+'</a>'
-      if (pair != newPairs[pairs.length-1]) appendString += ", "
-      div.append(appendString)
+      if (pageHash[pair[0]])
+      {
+        appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' is new!" class="kanji">'+pair[0]+'</a>'
+        if (pair != newPairs[pairs.length-1]) appendString += ", "
+        div.append(appendString)
+      }
     }
   }
   if (pairs.length > 0)
@@ -175,9 +178,12 @@ function draw(hash)
     for (var i = 0 ; i < pairs.length; i ++)
     {
       pair = pairs[i]
-      appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' seen '+pair[1]+' times" class="kanji">'+pair[0]+'</a>'
-      if (pair != pairs[pairs.length-1]) appendString += ", "
-      div.append(appendString)
+      if (pageHash[pair[0]])
+      {
+        appendString = '<a href="http://jisho.org/kanji/details/'+pair[0]+'" tooltip="'+pair[0]+' seen '+pair[1]+' times" class="kanji">'+pair[0]+'</a>'
+        if (pair != pairs[pairs.length-1]) appendString += ", "
+        div.append(appendString)
+      }
     }
   }
   if (newPairs.length < 1 && pairs.length < 1)
