@@ -18,6 +18,11 @@ var HASH_RANGE = 837 //Math.floor((KANJI_MAX - KANJI_MIN) / STORAGE_ENTRIES)+1
 //slightly fewer kanji, but that's no real concern
 
 
+//TODO: we don't need to save how many times it occured on page, but the information is valuable
+//new kanji should probably be sorted like that, and there should at least be an option to sort other kanji like
+//that (the alternative being sorting them by how many times you've seen them before)
+
+
 
 function saveSynced(kanjiHash)
 {
@@ -60,11 +65,9 @@ function loadSynced(callback)
        error(chrome.runtime.lastError.message)
        return
     }
-    console.log(loaded)
     var syncHash = {}
     for (var loadKey in loadList)
     {
-      console.log(loaded[loadKey])
       for (var item in loaded[loadKey])
       {
         syncHash[item] = loaded[loadKey][item]
