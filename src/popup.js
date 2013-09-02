@@ -94,17 +94,15 @@ function kanjiInfoLists(kanji, pageHash)
   newPairs = []
   for (var value in kanji) //Construct lists as [Kanji, #of times seen, #of times on page]
   {
-    if (kanji[value]==1) newPairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value]})
-    else pairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value]})
+    if (kanji[value]==1) newPairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
+    else pairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
   } 
   if (true)
   {
     //Sort pairs by the number of times we've seen them before
     pairs.sort(function(a, b) 
     {
-      a = a.timesSeen;
-      b = b.timesSeen;
-      return a < b ? -1 : (a > b ? 1 : 0);
+      return compareKanji(a, b, 'timesSeen')
     })
   }
   else
@@ -112,19 +110,28 @@ function kanjiInfoLists(kanji, pageHash)
     //Sort pairs by their frequency on page (in reverse)
     pairs.sort(function(a, b) 
     {
-      a = a.timesOnPage;
-      b = b.timesOnPage;
-      return a < b ? 1 : (a > b ? -1 : 0);
+      return compareKanji(a, b, 'timesOnPage', true)
     })
   }
   //Sort new pairs by their frequency on page (in reverse)
   newPairs.sort(function(a, b) 
   {
-    a = a.timesOnPage;
-    b = b.timesOnPage;
-    return a < b ? 1 : (a > b ? -1 : 0);
+    return compareKanji(a, b, 'timesOnPage', true)
   })
   return [newPairs, pairs]
+}
+
+function compareKanji(a, b, attribute, reverse)
+{
+  var result;
+  if (true)
+  {
+    if (a.jouyou && !b.jouyou) return -1
+    else if (!a.jouyou && b.jouyou) return 1
+  }
+  result = a[attribute] < b[attribute] ? -1 : (a[attribute] > b[attribute] ? 1 : 0);
+  if (reverse) return result*-1
+  else return result
 }
 
 //The values in the storage hash are page views and the ones in the generated hash are occurences on page, so they don't equate
@@ -180,16 +187,16 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
 function kanjiLink(kanji)
 {
   var link = '<a href="http://jisho.org/kanji/details/'+kanji.kanji+'" tooltip="'+kanji.kanji
-  link += JOUYOU_KANJI[kanji.kanji] ? ' seen '+kanji.timesSeen+' times" class="kanji">'+kanji.kanji+'</a>' : 
-  ' seen '+kanji.timesSeen+' times" class="kanji not_jouyou" style="color:black;">'+kanji.kanji+'</a>'
+  link += kanji.jouyou ? ' seen '+kanji.timesSeen+' times" class="kanji">'+kanji.kanji+'</a>' : 
+  ' seen '+kanji.timesSeen+' times" class="kanji not_jouyou">'+kanji.kanji+'</a>'
   return link
 }
 
 function newKanjiLink(kanji)
 {
   var link = '<a href="http://jisho.org/kanji/details/'+kanji.kanji+'" tooltip="'+kanji.kanji
-  link += JOUYOU_KANJI[kanji.kanji] ? ' is new!" class="kanji">'+kanji.kanji+'</a>' :
-  ' is new!" class="kanji not_jouyou" style="color:black;">'+kanji.kanji+'</a>'
+  link += kanji.jouyou ? ' is new!" class="kanji">'+kanji.kanji+'</a>' :
+  ' is new!" class="kanji not_jouyou";">'+kanji.kanji+'</a>'
   return link
 }
 

@@ -4,11 +4,18 @@
     <title>Kanji Scrape</title>
     <style>
       body {
-        min-width: 360px;
+        min-width: 400px;
         overflow-x: hidden;
       }
-   .kanji{display:inline;position:relative}
-   .kanji:hover{text-decoration:none}
+   .kanji{
+    display:inline;
+    position:relative;
+    text-decoration: none;
+    color: black;
+  }
+   .kanji:hover{
+    text-decoration:none
+  }
    .kanji:hover:after{
      background:#111;
      background:rgba(0,0,0,.8);
@@ -34,6 +41,12 @@
       position:absolute;
       z-index:99
      }
+     a.not_jouyou{
+      color:gray;
+     }
+     a.not_jouyou:hover:after{
+      background:gray;
+     }
     </style>
     <script src="jquery-1.10.2.min.js"></script>
     <script src="popup.js"></script>
@@ -44,9 +57,13 @@
 
   <div id='error'></div>
 
-  <div id="newKanji" style="display:none; color:red;"></div>
+  <div id="newKanji" style="display:none;">
+    <h3>New Kanji<h3>
+  </div>
   
-  <div id="kanji" style="display:none; color:blue;"></div>
+  <div id="kanji" style="display:none;">
+    <h3>Kanji<h3>
+  </div>
   
   <div id="noKanji" style="display:none;"></div>
   
