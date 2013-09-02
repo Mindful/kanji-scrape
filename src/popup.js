@@ -93,9 +93,12 @@ function kanjiInfoLists(kanji, pageHash)
   pairs = []
   newPairs = []
   for (var value in kanji) //Construct lists as [Kanji, #of times seen, #of times on page]
-  {
-    if (kanji[value]==1) newPairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
-    else pairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
+  { 
+    if (pageHash[value])
+    {
+      if (kanji[value]==1) newPairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
+      else pairs.push({'kanji':value, 'timesSeen':kanji[value], 'timesOnPage':pageHash[value], 'jouyou': JOUYOU_KANJI[value] ? true : false})
+    }
   } 
   if (true)
   {
@@ -207,34 +210,28 @@ function draw(hash, pageHash)
   var lists = kanjiInfoLists(hash, pageHash)
   var newPairs = lists[0]
   var pairs = lists[1]
-  if (newPairs.length > 0)
+  div = $('#newKanji')
+  for (var i = 0 ; i < newPairs.length; i ++)
   {
-    div = $('#newKanji')
-    div.show()
-    for (var i = 0 ; i < newPairs.length; i ++)
+    kanji = newPairs[i]
+    if (pageHash[kanji.kanji])
     {
-      kanji = newPairs[i]
-      if (pageHash[kanji.kanji])
-      {
-        appendString = newKanjiLink(kanji)
-        if (kanji != newPairs[pairs.length-1]) appendString += ", "
-        div.append(appendString)
-      }
+      div.show()
+      appendString = newKanjiLink(kanji)
+      if (kanji != newPairs[pairs.length-1]) appendString += ", "
+      div.append(appendString)
     }
   }
-  if (pairs.length > 0)
+  div = $('#kanji')
+  for (var i = 0 ; i < pairs.length; i ++)
   {
-    div = $('#kanji')
-    div.show()
-    for (var i = 0 ; i < pairs.length; i ++)
+    kanji = pairs[i]
+    if (pageHash[kanji.kanji])
     {
-      kanji = pairs[i]
-      if (pageHash[kanji.kanji])
-      {
-        appendString = kanjiLink(kanji)
-        if (kanji != pairs[pairs.length-1]) appendString += ", "
-        div.append(appendString)
-      }
+      div.show()
+      appendString = kanjiLink(kanji)
+      if (kanji != pairs[pairs.length-1]) appendString += ", "
+      div.append(appendString)
     }
   }
   if (Object.keys(pageHash).length < 1)
