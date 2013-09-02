@@ -210,6 +210,7 @@ function draw(hash, pageHash)
   var lists = kanjiInfoLists(hash, pageHash)
   var newPairs = lists[0]
   var pairs = lists[1]
+  $('#loading').hide()
   div = $('#newKanji')
   for (var i = 0 ; i < newPairs.length; i ++)
   {
