@@ -238,7 +238,6 @@ function draw(hash, pageHash)
   {
     div = $('#noKanji')
     div.show()
-    div.append("No Kanji found on page :(")
   }
 }
 
